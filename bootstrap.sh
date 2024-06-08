@@ -2,7 +2,7 @@
 set -e
 
 ### git ###
-# git fixup alias
+# git alias
 cp -f .gitconfig ~/.gitconfig
 
 ### starship ###
