@@ -2,5 +2,4 @@
 	squashtarget = !git log -1 --pretty=format:\"%H\" --grep=\"^fixup\\!\" --invert-grep
 	wip = !git commit --fixup $(git squashtarget)
 	squash = !git rebase -i --autosquash -- $(git squashtarget)~
-
-pushf = push --force-with-lease --force-if-includes
+	pushf = push --force-with-lease --force-if-includes

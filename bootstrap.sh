@@ -3,7 +3,7 @@ set -e
 
 ### git ###
 # git alias
-cp -f .gitconfig ~/.gitconfig
+cat .gitconfig >> ~/.gitconfig
 
 ### starship ###
 curl -sS https://starship.rs/install.sh | sh -s - -y
