@@ -1,0 +1,60 @@
+name: Bootstrap Check
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'bootstrap.sh'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'bootstrap.sh'
+
+jobs:
+  verify-installation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run bootstrap script
+        run: |
+          chmod +x ./bootstrap.sh
+          ./bootstrap.sh
+        shell: bash
+
+      - name: Verify fish installation
+        run: |
+          echo "Checking fish installation..."
+          if command -v fish &> /dev/null; then
+            echo "✅ fish is installed successfully."
+            fish --version
+          else
+            echo "❌ fish installation failed."
+            exit 1
+          fi
+        shell: bash
+
+      - name: Verify starship installation
+        run: |
+          echo "Checking starship installation..."
+          if command -v starship &> /dev/null; then
+            echo "✅ starship is installed successfully."
+            starship --version
+          else
+            echo "❌ starship installation failed."
+            exit 1
+          fi
+        shell: bash
+
+      - name: Verify atuin installation
+        run: |
+          echo "Checking atuin installation..."
+          if command -v atuin &> /dev/null; then
+            echo "✅ atuin is installed successfully."
+            atuin --version
+          else
+            echo "❌ atuin installation failed."
+            exit 1
+          fi
+        shell: bash
