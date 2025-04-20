@@ -29,11 +29,18 @@ jobs:
           ./bootstrap.sh
         shell: bash
 
-  verify-debian:
-    name: Verify on Debian
+  verify-containers:
+    name: Verify on ${{ matrix.container_name }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - container_name: Debian
+            container_image: debian:stable
+          - container_name: VSCode Devcontainer Base
+            container_image: mcr.microsoft.com/devcontainers/base:bookworm
     container:
-      image: debian:stable
+      image: ${{ matrix.container_image }}
       options: --privileged
     steps:
       - name: Install Git and other prerequisites
