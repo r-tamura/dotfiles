@@ -73,6 +73,31 @@ install_atuin() {
     echo "✅ Atuin shell history manager installed and configured"
 }
 
+# 関数: lazygitをインストール
+install_lazygit() {
+    echo "### Installing lazygit terminal UI..."
+    if ! command -v lazygit &> /dev/null; then
+        if command -v apt &> /dev/null; then
+            LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
+            curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+            tar xf lazygit.tar.gz lazygit
+            sudo install lazygit /usr/local/bin
+            rm lazygit lazygit.tar.gz
+        elif command -v dnf &> /dev/null; then
+            sudo dnf copr enable atim/lazygit -y
+            sudo dnf install -y lazygit
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm lazygit
+        else
+            echo "❌ Could not determine package manager. Please install lazygit manually."
+            return 1
+        fi
+        echo "✅ lazygit installed successfully"
+    else
+        echo "✅ lazygit is already installed"
+    fi
+}
+
 # メイン処理
 main() {
     echo "🚀 Starting dotfiles bootstrap process..."
@@ -82,6 +107,7 @@ main() {
     set_default_shell || echo "⚠️ Setting default shell failed"
     install_starship || echo "⚠️ Starship installation failed"
     install_atuin || echo "⚠️ Atuin installation failed"
+    install_lazygit || echo "⚠️ lazygit installation failed"
 
     echo "✨ Bootstrap process completed!"
 }

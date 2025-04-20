@@ -1,7 +1,7 @@
-# filepath: /workspaces/dotfiles/.github/workflows/bootstrap-check.yml
 name: Bootstrap Check
 
 # Trigger workflow on bootstrap.sh changes or manual run
+
 on:
   push:
     branches: [ main ]
@@ -107,6 +107,19 @@ jobs:
             fi
           else
             echo "❌ Atuin installation failed."
+            exit 1
+          fi
+        shell: bash
+
+      # Verify lazygit installation
+      - name: Verify lazygit installation
+        run: |
+          echo "Checking lazygit installation..."
+          if command -v lazygit &> /dev/null; then
+            echo "✅ lazygit is installed successfully."
+            lazygit --version
+          else
+            echo "❌ lazygit installation failed."
             exit 1
           fi
         shell: bash
