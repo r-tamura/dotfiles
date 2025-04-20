@@ -47,7 +47,10 @@ set_default_shell() {
         echo "$fish_path" | sudo tee -a /etc/shells
     fi
 
-    chsh -s "$fish_path"
+    echo "Changing default shell to fish"
+    # Qiitaの記事を元に修正: https://qiita.com/ryuchan00/items/41677110072cd8ab0560
+    # sudoを使用してパスワード入力なしでシェルを変更（Authentication failureを回避）
+    sudo chsh $USER -s "$fish_path"
     echo "✅ Fish is now the default shell"
 
     # Create fish config directory if it doesn't exist
