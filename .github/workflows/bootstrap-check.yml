@@ -15,9 +15,33 @@ on:
   workflow_dispatch: # Allow manual triggering
 
 jobs:
-  verify-installation:
+  verify-ubuntu:
+    name: Verify on Ubuntu
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Run the bootstrap script to install all tools
+      - name: Run bootstrap script
+        run: |
+          chmod +x ./bootstrap.sh
+          ./bootstrap.sh
+        shell: bash
+
+  verify-debian:
+    name: Verify on Debian
+    runs-on: ubuntu-latest
+    container:
+      image: debian:stable
+      options: --privileged
+    steps:
+      - name: Install Git and other prerequisites
+        run: |
+          apt-get update
+          apt-get install -y git sudo curl wget
+        shell: bash
+
       - name: Checkout code
         uses: actions/checkout@v4
 
