@@ -13,6 +13,11 @@ install_fish() {
     if ! command -v fish &> /dev/null; then
         echo "Installing fish shell..."
         if command -v apt &> /dev/null; then
+            # apt-add-repository コマンドが存在するか確認し、なければインストール
+            if ! command -v apt-add-repository &> /dev/null; then
+                sudo apt update
+                sudo apt install -y software-properties-common
+            fi
             sudo apt-add-repository ppa:fish-shell/release-3 -y
             sudo apt update
             sudo apt install -y fish
