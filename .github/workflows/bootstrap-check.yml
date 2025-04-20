@@ -1,5 +1,7 @@
+# filepath: /workspaces/dotfiles/.github/workflows/bootstrap-check.yml
 name: Bootstrap Check
 
+# Trigger workflow on bootstrap.sh changes or manual run
 on:
   push:
     branches: [ main ]
@@ -9,6 +11,8 @@ on:
     branches: [ main ]
     paths:
       - 'bootstrap.sh'
+      - '.github/workflows/bootstrap-check.yml'
+  workflow_dispatch: # Allow manual triggering
 
 jobs:
   verify-installation:
@@ -17,44 +21,92 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Run the bootstrap script to install all tools
       - name: Run bootstrap script
         run: |
           chmod +x ./bootstrap.sh
           ./bootstrap.sh
         shell: bash
 
+      # Verify Git configuration was applied correctly
+      - name: Verify Git configuration
+        run: |
+          echo "Checking Git configuration..."
+          if grep -q "$(cat .gitconfig)" ~/.gitconfig; then
+            echo "✅ Git configuration was applied successfully."
+          else
+            echo "❌ Git configuration was not applied correctly."
+            exit 1
+          fi
+        shell: bash
+
+      # Verify fish shell installation and default shell
       - name: Verify fish installation
         run: |
           echo "Checking fish installation..."
           if command -v fish &> /dev/null; then
-            echo "✅ fish is installed successfully."
+            echo "✅ Fish shell is installed successfully."
             fish --version
+
+            # Check if fish is in /etc/shells
+            if grep -q "$(which fish)" /etc/shells; then
+              echo "✅ Fish shell is properly added to /etc/shells."
+            else
+              echo "❌ Fish shell was not added to /etc/shells."
+              exit 1
+            fi
+
+            # Check fish config directory
+            if [ -d ~/.config/fish ]; then
+              echo "✅ Fish config directory exists."
+            else
+              echo "❌ Fish config directory was not created."
+              exit 1
+            fi
           else
-            echo "❌ fish installation failed."
+            echo "❌ Fish shell installation failed."
             exit 1
           fi
         shell: bash
 
+      # Verify starship installation and configuration
       - name: Verify starship installation
         run: |
           echo "Checking starship installation..."
           if command -v starship &> /dev/null; then
-            echo "✅ starship is installed successfully."
+            echo "✅ Starship is installed successfully."
             starship --version
+
+            # Check if starship init is in fish config
+            if grep -q "starship init fish" ~/.config/fish/config.fish 2>/dev/null; then
+              echo "✅ Starship is properly configured in fish config."
+            else
+              echo "❌ Starship initialization is missing from fish config."
+              exit 1
+            fi
           else
-            echo "❌ starship installation failed."
+            echo "❌ Starship installation failed."
             exit 1
           fi
         shell: bash
 
+      # Verify atuin installation and configuration
       - name: Verify atuin installation
         run: |
           echo "Checking atuin installation..."
           if command -v atuin &> /dev/null; then
-            echo "✅ atuin is installed successfully."
+            echo "✅ Atuin is installed successfully."
             atuin --version
+
+            # Check if atuin init is in fish config
+            if grep -q "atuin init fish" ~/.config/fish/config.fish 2>/dev/null; then
+              echo "✅ Atuin is properly configured in fish config."
+            else
+              echo "❌ Atuin initialization is missing from fish config."
+              exit 1
+            fi
           else
-            echo "❌ atuin installation failed."
+            echo "❌ Atuin installation failed."
             exit 1
           fi
         shell: bash
